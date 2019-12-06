@@ -44,30 +44,40 @@ def create_dict_from_csv(filename):
         new_dict = {rows[0]:rows[1] for rows in reader}
         return new_dict
 
+# Print out each player in single game dicitonary
+def print_by_players(player_list):
+    for entry in player_list:
+        for key in entry.keys():
+            print("--- " + key + " ---")
+            for stat in entry[key].keys():
+                print(stat + ": " + entry[key][stat])
+            print("\n")
+
+# Takes single game box-score url and returns list of player stat dictionaries
+def scrape_single_game_stats(url):
+    game_soup = create_page_soup(url) # creates soup object for passed url
+    boxscore_table = game_soup.find_all('table',{'id':'box-NYK-game-basic'})
+    boxscore_table_body = boxscore_table[0].find_all('tbody')
+    boxscore_rows = boxscore_table_body[0].find_all('tr') # rows containing player stats
+    player_game_stats = [] # list to hold stat dictionary associated with each player
+
+    for i in range(len(boxscore_rows)):
+        if i == 5:
+            continue # row that divides starters and bench
+        player_stats = {}
+        player_head = boxscore_rows[i].find_all('th')
+        player_name = player_head[0]['csk']
+        player_data = boxscore_rows[i].find_all('td')
+
+        for stat in player_data:
+            player_stats[stat['data-stat']] = stat.get_text()
+
+        full_player = {player_name: player_stats}
+        player_game_stats.append(full_player)
+
+    return player_game_stats
+
 # -------- MAIN ---------
 test_dict = initialize_boxscore_dict()
-
-test_url = 'https://www.basketball-reference.com/boxscores/201910230SAS.html'
-game_soup = create_page_soup(test_url)
-
-boxscore_table = game_soup.find_all('table',{'id':'box-NYK-game-basic'})
-boxscore_table_body = boxscore_table[0].find_all('tbody')
-boxscore_rows = boxscore_table_body[0].find_all('tr')
-player_game_stats = []
-
-for i in range(len(boxscore_rows)):
-    if i == 5:
-        continue
-    player_stats = {}
-    player_head = boxscore_rows[i].find_all('th')
-    player_name = player_head[0]['csk']
-    player_data = boxscore_rows[i].find_all('td')
-
-    for stat in player_data:
-        player_stats[stat['data-stat']] = stat.get_text()
-
-    full_player = {player_name: player_stats}
-    player_game_stats.append(full_player)
-
-for entry in player_game_stats:
-    print(entry)
+#player_stats = scrape_single_game_stats('https://www.basketball-reference.com/boxscores/201910230SAS.html')
+print_by_players(player_stats)
