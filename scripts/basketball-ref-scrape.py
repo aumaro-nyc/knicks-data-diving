@@ -54,7 +54,7 @@ def print_by_players(player_list):
             print("\n")
 
 # Takes single game box-score url and returns list of player stat dictionaries
-def scrape_single_game_stats(url):
+def scrape_single_game_player_stats(url):
     game_soup = create_page_soup(url) # creates soup object for passed url
     boxscore_table = game_soup.find_all('table',{'id':'box-NYK-game-basic'})
     boxscore_table_body = boxscore_table[0].find_all('tbody')
@@ -77,7 +77,22 @@ def scrape_single_game_stats(url):
 
     return player_game_stats
 
+# Get team totals for a single boxscore
+def scrape_single_game_totals(url):
+    totals_dict = {}
+    game_soup = create_page_soup(url)
+    boxscore_table = game_soup.find_all('table',{'id':'box-NYK-game-basic'})
+    boxscore_footer = boxscore_table[0].find_all('tfoot')
+    footer_row = boxscore_footer[0].find_all('tr')
+    footer_data = footer_row[0].find_all('td')
+
+    for stat in footer_data:
+        totals_dict[stat['data-stat']] = stat.get_text()
+
+    return totals_dict
+
+
 # -------- MAIN ---------
 test_dict = initialize_boxscore_dict()
-#player_stats = scrape_single_game_stats('https://www.basketball-reference.com/boxscores/201910230SAS.html')
-print_by_players(player_stats)
+player_stats = scrape_single_game_player_stats('https://www.basketball-reference.com/boxscores/201910230SAS.html')
+test_total = scrape_single_game_totals('https://www.basketball-reference.com/boxscores/201910230SAS.html')
