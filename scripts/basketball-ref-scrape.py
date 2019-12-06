@@ -46,5 +46,28 @@ def create_dict_from_csv(filename):
 
 # -------- MAIN ---------
 test_dict = initialize_boxscore_dict()
-write_dict_to_file(test_dict,"../data_files/test.csv")
-return_test = create_dict_from_csv("../data_files/test.csv")
+
+test_url = 'https://www.basketball-reference.com/boxscores/201910230SAS.html'
+game_soup = create_page_soup(test_url)
+
+boxscore_table = game_soup.find_all('table',{'id':'box-NYK-game-basic'})
+boxscore_table_body = boxscore_table[0].find_all('tbody')
+boxscore_rows = boxscore_table_body[0].find_all('tr')
+player_game_stats = []
+
+for i in range(len(boxscore_rows)):
+    if i == 5:
+        continue
+    player_stats = {}
+    player_head = boxscore_rows[i].find_all('th')
+    player_name = player_head[0]['csk']
+    player_data = boxscore_rows[i].find_all('td')
+
+    for stat in player_data:
+        player_stats[stat['data-stat']] = stat.get_text()
+
+    full_player = {player_name: player_stats}
+    player_game_stats.append(full_player)
+
+for entry in player_game_stats:
+    print(entry)
