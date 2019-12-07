@@ -1,6 +1,7 @@
 # Scraping Basketball-reference.com
 import requests
 import csv
+import pandas as pd
 from bs4 import BeautifulSoup
 
 # Takes a url as an argument and returns a BeautifulSoup object associated w/ url
@@ -93,6 +94,27 @@ def scrape_single_game_totals(url):
 
 
 # -------- MAIN ---------
-test_dict = initialize_boxscore_dict()
+#test_dict = initialize_boxscore_dict()
 player_stats = scrape_single_game_player_stats('https://www.basketball-reference.com/boxscores/201910230SAS.html')
-test_total = scrape_single_game_totals('https://www.basketball-reference.com/boxscores/201910230SAS.html')
+#test_total = scrape_single_game_totals('https://www.basketball-reference.com/boxscores/201910230SAS.html')
+
+#test_df = pd.DataFrame(player_stats[0])
+test_df = pd.DataFrame()
+player_name = player_stats[1].keys()[0]
+stat_names = []
+
+for stat in player_stats[1][player_name].keys():
+    stat_names.append(stat)
+test_df.insert(0,"Stat",stat_names)
+
+for i in range(0,len(player_stats) - 1):
+    stat_list = []
+    player_name = player_stats[i].keys()[0]
+    for val in player_stats[i][player_name].values():
+        stat_list.append(val)
+    try:
+        test_df.insert(i + 1,player_name,stat_list)
+    except ValueError:
+        break
+
+print(test_df.head(5))
