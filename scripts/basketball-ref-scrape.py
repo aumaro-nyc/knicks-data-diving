@@ -113,6 +113,7 @@ def create_player_dataframe(player_dict):
             break
     return test_df
 
+# Write a player stats dataframe to a csv file
 def write_dataframe_file(dataframe, filepath):
     dataframe.to_csv(filepath)
 
@@ -121,6 +122,5 @@ def write_dataframe_file(dataframe, filepath):
 player_stats = scrape_single_game_player_stats('https://www.basketball-reference.com/boxscores/201910230SAS.html')
 #test_total = scrape_single_game_totals('https://www.basketball-reference.com/boxscores/201910230SAS.html')
 
-#test_df = pd.DataFrame(player_stats[0])
 test_df = create_player_dataframe(player_stats)
-write_dataframe_file(test_df, '../data_files/game_test.csv')
+#write_dataframe_file(test_df, '../data_files/game_test.csv')
