@@ -117,10 +117,17 @@ def create_player_dataframe(player_dict):
 def write_dataframe_file(dataframe, filepath):
     dataframe.to_csv(filepath)
 
+# Create a dataframe from a csv file
+def read_csv_to_dataframe(filepath):
+    df = pd.read_csv(filepath)
+    return df
+
 # -------- MAIN ---------
 #test_dict = initialize_boxscore_dict()
-player_stats = scrape_single_game_player_stats('https://www.basketball-reference.com/boxscores/201910230SAS.html')
+#player_stats = scrape_single_game_player_stats('https://www.basketball-reference.com/boxscores/201910230SAS.html')
 #test_total = scrape_single_game_totals('https://www.basketball-reference.com/boxscores/201910230SAS.html')
 
-test_df = create_player_dataframe(player_stats)
+#test_df = create_player_dataframe(player_stats)
 #write_dataframe_file(test_df, '../data_files/game_test.csv')
+new_df = read_csv_to_dataframe('../data_files/game_test.csv')
+print(new_df.head(5))
